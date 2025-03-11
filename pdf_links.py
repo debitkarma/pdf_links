@@ -13,18 +13,22 @@ def get_all_links_gen(filename: str):
             links = page.get_links()
             for link in links:
                 if link["kind"] == pymupdf.LINK_URI:
-                    yield link["uri"]
+                    yield link
                 else:
                     continue
 
 
 @click.command()
+@click.option("-s", "--search", prompt=True)
 @click.argument('files', nargs=-1, type=click.Path(exists=True))
 def get_links(files):
     results = dict()
     for file in files:
-        links = [ link for link in get_all_links_gen(file) ]
-        results[file] = links
+        links = [ link.uri for link in get_all_links_gen(file) ]
+        # results[file] = links
+        if search:
+            if search in links:
+                click.echo("Found")
     click.echo(results)
 
 
